@@ -12,10 +12,10 @@ app.get("/welcome", (req, res) => {
 
 //CRUD
 
-const data = [];
+let data = [];
 
 //app.post()
-app.post("/", (req, res) => {
+app.post("/create", (req, res) => {
   //console.log(req.body);
   const entry = { ...req.body, id: uuidv4() };
 
@@ -41,8 +41,36 @@ app.get("/entryId", (req, res) => {
 
   return res.status(200).json(entry);
 });
+
 //app.put()
+app.put("/:userId", (req, res) => {
+  const { userId } = req.params; // captura o id do usuário
+
+  let index; //inicia a variável vazia que vai guardar o index que o usuário tem dentro da array data
+
+  let user = data.find((user, i) => {
+    return user.id === userId;
+  });
+
+  const updatedUser = { ...user, ...req.body };
+  data.splice(index, 1);
+
+  data.push(updatedUser);
+
+  return res.status(200).json(updatedUser);
+});
+
 //app.delete()
+app.delete("/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  //filtrando a array pra manter todos os users que tiverem um id DIFERENTE do idUser
+  let filtered = data.filter((user) => user.id !== userId);
+
+  data = filtered;
+
+  return res.status(200).json(data);
+});
 
 app.listen(4000, () => {
   console.log("Server up and running at port 4000.");
